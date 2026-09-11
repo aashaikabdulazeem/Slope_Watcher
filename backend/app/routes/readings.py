@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from ...database.connection import get_db
 from ...database.models import Station, SensorReading
 from ...ml.predictor import predictor
+from ..alerts_engine import evaluate_reading_for_alert
 from ..schemas import SensorReadingCreate, SensorReadingResponse
 
 router = APIRouter(tags=["Sensor Readings"])
@@ -76,7 +77,11 @@ def ingest_reading(payload: SensorReadingCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(reading)
 
+    # Evaluate alert
+    new_alert = evaluate_reading_for_alert(db, station, reading, pred_res)
+
     return {
         "reading": reading.to_dict(),
-        "prediction": pred_res
+        "prediction": pred_res,
+        "alert_triggered": new_alert.to_dict() if new_alert else None
     }
