@@ -1,0 +1,121 @@
+{
+  "model_type": "Random Forest Classifier + Gradient Boosting Regressor",
+  "training_samples": 10000,
+  "test_samples": 2000,
+  "features": [
+    "rainfall",
+    "soil_moisture",
+    "slope_angle",
+    "vibration",
+    "pore_water_pressure",
+    "temperature"
+  ],
+  "accuracy": 0.9485,
+  "r2_score": 0.9878,
+  "rmse": 2.87,
+  "classification_report": {
+    "Critical": {
+      "precision": 0.9214285714285714,
+      "recall": 0.8835616438356164,
+      "f1-score": 0.9020979020979021,
+      "support": 146.0
+    },
+    "Safe": {
+      "precision": 0.9853479853479854,
+      "recall": 0.9796067006554989,
+      "f1-score": 0.9824689554419284,
+      "support": 1373.0
+    },
+    "Warning": {
+      "precision": 0.834319526627219,
+      "recall": 0.8392857142857143,
+      "f1-score": 0.8367952522255193,
+      "support": 168.0
+    },
+    "Watch": {
+      "precision": 0.8650306748466258,
+      "recall": 0.9009584664536742,
+      "f1-score": 0.8826291079812206,
+      "support": 313.0
+    },
+    "accuracy": 0.9485,
+    "macro avg": {
+      "precision": 0.9015316895626003,
+      "recall": 0.9008531313076259,
+      "f1-score": 0.9009978044366426,
+      "support": 2000.0
+    },
+    "weighted avg": {
+      "precision": 0.949165818505861,
+      "recall": 0.9485,
+      "f1-score": 0.9487403413500354,
+      "support": 2000.0
+    }
+  },
+  "confusion_matrix": {
+    "labels": [
+      "Safe",
+      "Watch",
+      "Warning",
+      "Critical"
+    ],
+    "matrix": [
+      [
+        1345,
+        28,
+        0,
+        0
+      ],
+      [
+        20,
+        282,
+        11,
+        0
+      ],
+      [
+        0,
+        16,
+        141,
+        11
+      ],
+      [
+        0,
+        0,
+        17,
+        129
+      ]
+    ]
+  },
+  "feature_importances": [
+    {
+      "feature": "slope_angle",
+      "importance": 25.76
+    },
+    {
+      "feature": "soil_moisture",
+      "importance": 25.67
+    },
+    {
+      "feature": "pore_water_pressure",
+      "importance": 19.16
+    },
+    {
+      "feature": "rainfall",
+      "importance": 17.46
+    },
+    {
+      "feature": "vibration",
+      "importance": 9.91
+    },
+    {
+      "feature": "temperature",
+      "importance": 2.04
+    }
+  ],
+  "classes": [
+    "Safe",
+    "Watch",
+    "Warning",
+    "Critical"
+  ]
+}
