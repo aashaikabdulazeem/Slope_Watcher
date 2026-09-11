@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: landslide-sentinel-backend
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r backend/requirements.txt && python backend/ml/train.py && python -m backend.database.seed
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: MAPTILER_API_KEY
+        sync: false
