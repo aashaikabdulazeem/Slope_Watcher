@@ -13,17 +13,18 @@ if not exist "backend\ml\saved_models\landslide_model.joblib" (
 )
 
 echo.
-echo [2/3] Starting FastAPI Backend with WebSocket and Simulation on port 8000...
-start "LandSlide Sentinel Backend" cmd /k "python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --reload"
+echo [2/3] Starting FastAPI Backend with WebSocket on 0.0.0.0:8000...
+start "LandSlide Sentinel Backend" cmd /k "python -m uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload"
 
 echo.
-echo [3/3] Starting React Frontend on port 5173...
-start "LandSlide Sentinel Frontend" cmd /k "cd frontend && npm run dev"
+echo [3/3] Starting React Frontend on 0.0.0.0:5173...
+start "LandSlide Sentinel Frontend" cmd /k "cd frontend && npm run dev -- --host 0.0.0.0"
 
 echo.
 echo ===================================================================
-echo LandSlide Sentinel is launching!
-echo - Backend API & Docs: http://127.0.0.1:8000/docs
-echo - Frontend Dashboard: http://localhost:5173
+echo LandSlide Sentinel is globally hosted!
+echo - Localhost:  http://localhost:5173
+echo - Network:    http://192.168.1.9:5173 (accessible on phones/LAN)
+echo - API Docs:   http://localhost:8000/docs
 echo ===================================================================
 pause
