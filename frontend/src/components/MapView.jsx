@@ -33,9 +33,11 @@ export default function MapView({ stations = [], onSelectStation }) {
   const mapInstanceRef = useRef(null);
   const tileLayerRef = useRef(null);
   const markersRef = useRef({});
+  const circlesRef = useRef({});
   const [activeLayer, setActiveLayer] = useState('terrain');
   const [maptilerKey, setMaptilerKey] = useState('');
   const [showLayerPicker, setShowLayerPicker] = useState(false);
+  const [showCriticalZones, setShowCriticalZones] = useState(true);
 
   // Initialize map
   useEffect(() => {
@@ -201,6 +203,53 @@ export default function MapView({ stations = [], onSelectStation }) {
 
   }, [stations]);
 
+  // Render critical zones as alert radius circles
+  useEffect(() => {
+    if (!mapInstanceRef.current || !stations.length) return;
+    const map = mapInstanceRef.current;
+
+    // Clear old circles
+    Object.values(circlesRef.current).forEach(circle => map.removeLayer(circle));
+    circlesRef.current = {};
+
+    if (!showCriticalZones) return;
+
+    // Add circles for critical/warning zones
+    stations.forEach(station => {
+      const reading = station.latest_reading || {};
+      const riskLevel = reading.risk_level || 'Safe';
+      
+      if (riskLevel === 'Critical' || riskLevel === 'Warning') {
+        const radiusKm = riskLevel === 'Critical' ? 5 : 3; // km
+        const radiusM = radiusKm * 1000; // convert to meters
+
+        const color = riskLevel === 'Critical' ? '#ef4444' : '#f97316';
+        const circle = L.circle(
+          [station.latitude, station.longitude],
+          {
+            radius: radiusM,
+            color: color,
+            weight: 2,
+            opacity: 0.4,
+            fill: true,
+            fillColor: color,
+            fillOpacity: riskLevel === 'Critical' ? 0.15 : 0.08,
+            dashArray: riskLevel === 'Critical' ? '5, 5' : 'none'
+          }
+        ).addTo(map);
+
+        // Add tooltip
+        circle.bindTooltip(
+          `<strong>${station.name}</strong><br/>${riskLevel} Zone (${radiusKm}km radius)`,
+          { permanent: false }
+        );
+
+        circlesRef.current[station.id] = circle;
+      }
+    });
+
+  }, [stations, showCriticalZones]);
+
   const handleRecenter = () => {
     if (!mapInstanceRef.current || !Object.keys(markersRef.current).length) return;
     const group = L.featureGroup(Object.values(markersRef.current));
@@ -222,31 +271,31 @@ export default function MapView({ stations = [], onSelectStation }) {
             onClick={() => setActiveLayer('terrain')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
               activeLayer === 'terrain'
-                ? 'bg-blue-600 text-white shadow-md'
+                ? 'bg-teal-600 text-white shadow-md'
                 : 'text-slate-300 hover:text-white hover:bg-slate-800'
             }`}
           >
             <Mountain className="w-3.5 h-3.5" />
-            <span>Terrain / Topo</span>
+            <span>Terrain</span>
           </button>
 
           <button
             onClick={() => setActiveLayer('satellite')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
               activeLayer === 'satellite'
-                ? 'bg-blue-600 text-white shadow-md'
+                ? 'bg-teal-600 text-white shadow-md'
                 : 'text-slate-300 hover:text-white hover:bg-slate-800'
             }`}
           >
             <Eye className="w-3.5 h-3.5" />
-            <span>Satellite Layer</span>
+            <span>Satellite</span>
           </button>
 
           <button
             onClick={() => setActiveLayer('street')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
               activeLayer === 'street'
-                ? 'bg-blue-600 text-white shadow-md'
+                ? 'bg-teal-600 text-white shadow-md'
                 : 'text-slate-300 hover:text-white hover:bg-slate-800'
             }`}
           >
@@ -254,6 +303,20 @@ export default function MapView({ stations = [], onSelectStation }) {
             <span>Streets</span>
           </button>
         </div>
+
+        {/* Critical Zones Toggle */}
+        <button
+          onClick={() => setShowCriticalZones(!showCriticalZones)}
+          title={showCriticalZones ? "Hide critical zones" : "Show critical zones"}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+            showCriticalZones
+              ? 'bg-red-600 text-white shadow-md'
+              : 'bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-white'
+          }`}
+        >
+          <AlertCircle className="w-3.5 h-3.5" />
+          <span>Alert Zones</span>
+        </button>
 
         {/* Recenter button */}
         <button

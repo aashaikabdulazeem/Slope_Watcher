@@ -38,14 +38,14 @@ export default function StationCard({ station, onSelectStation }) {
 
   // Helper for sensor card items
   const renderSensorItem = (Icon, label, value, unit, isWarning = false) => (
-    <div className={`p-2.5 rounded-lg border transition-all ${
+    <div className={`p-2.5 rounded-lg border transition-all hover:shadow-md ${
       isWarning 
-        ? 'bg-red-500/10 border-red-500/30 text-red-300' 
-        : 'bg-slate-900/60 border-slate-800/80 text-slate-300'
+        ? 'bg-gradient-to-br from-red-600/30 to-orange-600/20 border-red-500/50 text-red-300 shadow-md shadow-red-900/20' 
+        : 'bg-gradient-to-br from-slate-900/70 to-slate-800/60 border-slate-700/50 text-slate-300 hover:border-slate-600/70'
     }`}>
       <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1">
         <span className="flex items-center gap-1">
-          <Icon className="w-3.5 h-3.5 text-slate-400" />
+          <Icon className={`w-3.5 h-3.5 ${isWarning ? 'text-orange-400 pulse-glow' : 'text-slate-500'}`} />
           {label}
         </span>
       </div>
@@ -61,89 +61,91 @@ export default function StationCard({ station, onSelectStation }) {
   return (
     <div className={`relative rounded-2xl border transition-all duration-300 backdrop-blur-sm overflow-hidden flex flex-col justify-between ${
       riskLevel === 'Critical'
-        ? 'bg-red-950/20 border-red-500/60 shadow-lg shadow-red-900/30 ring-1 ring-red-500/40'
+        ? 'bg-gradient-to-br from-red-950/60 via-orange-950/40 to-red-950/50 border-red-500/60 shadow-xl shadow-red-900/40 glow-border'
         : riskLevel === 'Warning'
-        ? 'bg-orange-950/20 border-orange-500/50 shadow-md shadow-orange-900/20'
+        ? 'bg-gradient-to-br from-orange-950/50 via-amber-950/40 to-orange-950/40 border-orange-500/50 shadow-lg shadow-orange-900/30'
         : riskLevel === 'Watch'
-        ? 'bg-amber-950/10 border-amber-500/40'
-        : 'bg-slate-900/40 border-slate-800 hover:border-slate-700'
+        ? 'bg-gradient-to-br from-amber-950/30 via-yellow-950/20 to-amber-950/30 border-amber-500/40 shadow-md shadow-amber-900/20'
+        : 'bg-gradient-to-br from-blue-950/30 via-slate-900/50 to-cyan-950/30 border-blue-600/30 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-900/20'
     }`}>
       
       {/* Critical Ribbon / Top highlight */}
       {riskLevel === 'Critical' && (
-        <div className="h-1 bg-gradient-to-r from-red-600 via-orange-500 to-red-600 animate-pulse" />
+        <div className="h-1.5 bg-gradient-to-r from-red-600 via-orange-500 to-red-600 animate-pulse" />
+      )}
+      {riskLevel === 'Warning' && (
+        <div className="h-1 bg-gradient-to-r from-orange-500 to-amber-500" />
       )}
 
-      <div className="p-4 sm:p-5">
+      <div className="p-5">
         
         {/* Header: Station Code, Name & Risk Badge */}
-        <div className="flex items-start justify-between gap-2 mb-3">
+        <div className="flex items-start justify-between gap-3 mb-3">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-blue-400 border border-slate-700">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-mono text-xs font-semibold px-2 py-1 rounded-lg bg-slate-800/60 text-teal-300 border border-slate-700/50">
                 {station.code}
               </span>
               {station.code === 'STN-003' && (
-                <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1">
-                  <Sparkles className="w-2.5 h-2.5" /> Escalating Demo
+                <span className="text-[10px] px-2 py-1 rounded-lg font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1">
+                  ⚡ Demo
                 </span>
               )}
             </div>
-            <h3 className="text-sm font-bold text-white mt-1 line-clamp-1" title={station.name}>
+            <h3 className="text-base font-bold text-white mt-1 line-clamp-1 font-outfit" title={station.name}>
               {station.name}
             </h3>
-            <p className="text-[11px] text-slate-400 line-clamp-1" title={station.location_name}>
-              {station.location_name} • Elev: {station.elevation}m
+            <p className="text-[11px] text-slate-400 line-clamp-1 font-light" title={station.location_name}>
+              {station.location_name} • {station.elevation}m
             </p>
           </div>
 
           {/* Risk Level Badge */}
-          <div className="flex flex-col items-end">
-            <div className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-sm ${
+          <div className="flex flex-col items-end gap-1">
+            <div className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1 shadow-md ${
               riskLevel === 'Critical'
                 ? 'bg-red-600 text-white animate-pulse'
                 : riskLevel === 'Warning'
-                ? 'bg-orange-500 text-slate-950'
+                ? 'bg-orange-500 text-white'
                 : riskLevel === 'Watch'
-                ? 'bg-amber-400 text-slate-950'
-                : 'bg-emerald-500 text-slate-950'
+                ? 'bg-amber-400 text-slate-900'
+                : 'bg-emerald-500 text-white'
             }`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${
-                riskLevel === 'Critical' ? 'bg-white' : 'bg-slate-900'
-              }`} />
+              <span className="w-1.5 h-1.5 rounded-full bg-white/70" />
               {riskLevel}
             </div>
-            <span className="text-[10px] text-slate-400 font-mono mt-1">
-              Updated {formatTimestamp(reading.timestamp)}
+            <span className="text-[10px] text-slate-400 font-mono">
+              {formatTimestamp(reading.timestamp)}
             </span>
           </div>
         </div>
 
         {/* Risk Score Progress Gauge */}
-        <div className="my-3 bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
-          <div className="flex items-center justify-between text-xs mb-1.5">
-            <span className="text-slate-400 font-medium flex items-center gap-1">
-              <Activity className="w-3.5 h-3.5 text-slate-400" />
-              AI Geotechnical Risk Score
+        <div className="my-3 bg-gradient-to-br from-slate-950/70 to-slate-900/50 p-3 rounded-xl border border-slate-700/50 shadow-md">
+          <div className="flex items-center justify-between text-xs mb-2">
+            <span className="text-slate-300 font-medium flex items-center gap-1">
+              <Activity className={`w-3.5 h-3.5 ${riskScore > 50 ? 'text-orange-400 pulse-glow' : 'text-emerald-400'}`} />
+              Risk Score
             </span>
             <span className="font-mono font-bold text-sm" style={{ color: riskConfig.hex }}>
-              {riskScore.toFixed(1)} <span className="text-xs text-slate-500 font-normal">/ 100</span>
+              {riskScore.toFixed(1)}<span className="text-xs text-slate-500 font-normal ml-0.5">/ 100</span>
             </span>
           </div>
-          <div className="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden p-0.5">
+          <div className="w-full h-2.5 bg-slate-800/60 rounded-full overflow-hidden border border-slate-700/30 shadow-inner">
             <div 
               className="h-full rounded-full transition-all duration-500"
               style={{
                 width: `${Math.min(100, Math.max(5, riskScore))}%`,
-                backgroundColor: riskConfig.hex
+                backgroundColor: riskConfig.hex,
+                boxShadow: `0 0 10px ${riskConfig.hex}80`
               }}
             />
           </div>
-          <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+          <div className="flex justify-between text-[10px] text-slate-500 font-mono mt-1.5">
             <span>0 Safe</span>
             <span>50 Watch</span>
-            <span>75 Warning</span>
-            <span>100 Critical</span>
+            <span>75⚠️</span>
+            <span>100 🔴</span>
           </div>
         </div>
 
@@ -208,7 +210,7 @@ export default function StationCard({ station, onSelectStation }) {
       </div>
 
       {/* Footer Actions: Scenario Injector & Inspect */}
-      <div className="px-4 py-3 bg-slate-950/60 border-t border-slate-800/80 flex items-center justify-between gap-2">
+      <div className="px-4 py-3 bg-gradient-to-r from-slate-950/80 via-purple-950/40 to-slate-950/80 border-t border-slate-800/80 flex items-center justify-between gap-2 hover:bg-gradient-to-r hover:from-slate-950 hover:via-purple-900/60 hover:to-slate-950 transition-all">
         {/* Scenario Injection Dropdown */}
         <div className="flex items-center gap-1.5">
           <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Sim:</span>
@@ -216,7 +218,7 @@ export default function StationCard({ station, onSelectStation }) {
             disabled={injecting}
             value={station.scenario_mode || 'normal'}
             onChange={(e) => handleScenarioChange(e.target.value)}
-            className="text-[11px] bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer"
+            className="text-[11px] bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/60 rounded-md px-2 py-1 text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer hover:border-slate-600 transition-all"
           >
             <option value="normal">Normal Baseline</option>
             <option value="gradual_escalation">Gradual Escalation (3 min)</option>
@@ -229,7 +231,7 @@ export default function StationCard({ station, onSelectStation }) {
         {/* Inspect Trend Button */}
         <button
           onClick={() => onSelectStation && onSelectStation(station.id)}
-          className="flex items-center gap-1 text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors"
+          className="flex items-center gap-1 text-xs font-semibold bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1 rounded-lg hover:from-blue-500 hover:to-purple-500 shadow-md hover:shadow-lg hover:shadow-blue-500/40 transition-all duration-200"
         >
           <span>Trends</span>
           <ChevronRight className="w-3.5 h-3.5" />
